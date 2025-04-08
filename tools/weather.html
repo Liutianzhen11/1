@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气预报 - 我的个人网站</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../animations.css">
+    <style>
+        .tool-content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .weather-search {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        
+        .city-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            padding: 12px 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .search-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .weather-info {
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .weather-info.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .weather-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .weather-location {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .weather-time {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .weather-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .weather-temp {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .weather-icon {
+            font-size: 3rem;
+            margin-right: 20px;
+        }
+        
+        .weather-desc {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 5px;
+        }
+        
+        .weather-feels-like {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .weather-detail-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .weather-error {
+            padding: 20px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border-radius: 5px;
+            color: #ff8888;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .popular-cities {
+            margin-top: 40px;
+        }
+        
+        .popular-cities h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #ddd;
+        }
+        
+        .city-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .city-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 30px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .city-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .weather-forecast {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .forecast-title {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .forecast-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .forecast-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .forecast-day {
+            font-size: 0.9rem;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-temp {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .forecast-high {
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        
+        .forecast-low {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #fff;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .weather-details, .forecast-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .weather-details, .forecast-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo animated-logo">个人网站</div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-item">首页</a></li>
+                <li><a href="../resume.html" class="nav-item">个人简历</a></li>
+                <li><a href="../xiaohongshu.html" class="nav-item">小红书</a></li>
+                <li><a href="../douyin.html" class="nav-item">抖音</a></li>
+                <li><a href="../about.html" class="nav-item">About me</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>天气预报</h1>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container">
+                <div class="tool-content">
+                    <h2>查询天气</h2>
+                    <p>输入城市名称查询当前天气状况和未来三天预报。</p>
+                    
+                    <div class="weather-search">
+                        <input type="text" id="city-input" class="city-input" placeholder="输入城市名称(如：北京、上海、广州)">
+                        <button id="search-btn" class="search-btn">查询</button>
+                    </div>
+                    
+                    <div id="weather-error" class="weather-error">
+                        无法找到该城市的天气信息，请确认城市名称是否正确。
+                    </div>
+                    
+                    <div id="loading" class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>正在获取天气数据...</p>
+                    </div>
+                    
+                    <div id="weather-info" class="weather-info">
+                        <div class="weather-header">
+                            <div class="weather-location" id="location">北京</div>
+                            <div class="weather-time" id="current-time">2023-04-08 14:30</div>
+                        </div>
+                        
+                        <div class="weather-main">
+                            <div>
+                                <div class="weather-temp" id="temperature">24°C</div>
+                                <div class="weather-desc" id="weather-desc">晴</div>
+                                <div class="weather-feels-like" id="feels-like">体感温度: 26°C</div>
+                            </div>
+                            <div class="weather-icon" id="weather-icon">☀️</div>
+                        </div>
+                        
+                        <div class="weather-details">
+                            <div class="weather-detail-item">
+                                <div class="detail-label">湿度</div>
+                                <div class="detail-value" id="humidity">45%</div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <div class="detail-label">风速</div>
+                                <div class="detail-value" id="wind-speed">3.5 m/s</div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <div class="detail-label">气压</div>
+                                <div class="detail-value" id="pressure">1013 hPa</div>
+                            </div>
+                        </div>
+                        
+                        <div class="weather-forecast">
+                            <div class="forecast-title">三日预报</div>
+                            <div class="forecast-items" id="forecast-container">
+                                <!-- 天气预报将通过JavaScript动态添加 -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="popular-cities">
+                        <h3>热门城市</h3>
+                        <div class="city-buttons">
+                            <button class="city-btn" data-city="北京">北京</button>
+                            <button class="city-btn" data-city="上海">上海</button>
+                            <button class="city-btn" data-city="广州">广州</button>
+                            <button class="city-btn" data-city="深圳">深圳</button>
+                            <button class="city-btn" data-city="成都">成都</button>
+                            <button class="city-btn" data-city="杭州">杭州</button>
+                        </div>
+                    </div>
+                    
+                    <a href="../about.html" class="back-link">← 返回工具箱</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 个人网站. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cityInput = document.getElementById('city-input');
+            const searchBtn = document.getElementById('search-btn');
+            const weatherInfo = document.getElementById('weather-info');
+            const weatherError = document.getElementById('weather-error');
+            const loading = document.getElementById('loading');
+            const cityButtons = document.querySelectorAll('.city-btn');
+            
+            // 模拟天气数据
+            const weatherData = {
+                '北京': {
+                    temperature: '24°C',
+                    description: '晴',
+                    feelsLike: '体感温度: 26°C',
+                    humidity: '45%',
+                    windSpeed: '3.5 m/s',
+                    pressure: '1013 hPa',
+                    icon: '☀️',
+                    forecast: [
+                        {day: '明天', icon: '☁️', high: '25°C', low: '18°C'},
+                        {day: '后天', icon: '🌧️', high: '22°C', low: '16°C'},
+                        {day: '大后天', icon: '⛅', high: '24°C', low: '17°C'}
+                    ]
+                },
+                '上海': {
+                    temperature: '22°C',
+                    description: '多云',
+                    feelsLike: '体感温度: 23°C',
+                    humidity: '60%',
+                    windSpeed: '4.2 m/s',
+                    pressure: '1010 hPa',
+                    icon: '☁️',
+                    forecast: [
+                        {day: '明天', icon: '🌧️', high: '21°C', low: '17°C'},
+                        {day: '后天', icon: '🌧️', high: '20°C', low: '16°C'},
+                        {day: '大后天', icon: '☁️', high: '22°C', low: '18°C'}
+                    ]
+                },
+                '广州': {
+                    temperature: '28°C',
+                    description: '晴',
+                    feelsLike: '体感温度: 30°C',
+                    humidity: '70%',
+                    windSpeed: '2.8 m/s',
+                    pressure: '1008 hPa',
+                    icon: '☀️',
+                    forecast: [
+                        {day: '明天', icon: '☀️', high: '29°C', low: '22°C'},
+                        {day: '后天', icon: '⛅', high: '27°C', low: '21°C'},
+                        {day: '大后天', icon: '🌧️', high: '25°C', low: '20°C'}
+                    ]
+                },
+                '深圳': {
+                    temperature: '27°C',
+                    description: '晴',
+                    feelsLike: '体感温度: 29°C',
+                    humidity: '65%',
+                    windSpeed: '3.0 m/s',
+                    pressure: '1009 hPa',
+                    icon: '☀️',
+                    forecast: [
+                        {day: '明天', icon: '☀️', high: '28°C', low: '23°C'},
+                        {day: '后天', icon: '⛅', high: '26°C', low: '22°C'},
+                        {day: '大后天', icon: '🌧️', high: '24°C', low: '21°C'}
+                    ]
+                },
+                '成都': {
+                    temperature: '20°C',
+                    description: '阴',
+                    feelsLike: '体感温度: 19°C',
+                    humidity: '75%',
+                    windSpeed: '2.5 m/s',
+                    pressure: '1015 hPa',
+                    icon: '☁️',
+                    forecast: [
+                        {day: '明天', icon: '🌧️', high: '19°C', low: '15°C'},
+                        {day: '后天', icon: '🌧️', high: '17°C', low: '14°C'},
+                        {day: '大后天', icon: '☁️', high: '20°C', low: '15°C'}
+                    ]
+                },
+                '杭州': {
+                    temperature: '23°C',
+                    description: '多云',
+                    feelsLike: '体感温度: 24°C',
+                    humidity: '55%',
+                    windSpeed: '3.8 m/s',
+                    pressure: '1011 hPa',
+                    icon: '⛅',
+                    forecast: [
+                        {day: '明天', icon: '☁️', high: '22°C', low: '16°C'},
+                        {day: '后天', icon: '🌧️', high: '20°C', low: '15°C'},
+                        {day: '大后天', icon: '☁️', high: '21°C', low: '16°C'}
+                    ]
+                }
+            };
+            
+            // 初始显示北京天气
+            displayWeather('北京');
+            
+            // 搜索按钮点击事件
+            searchBtn.addEventListener('click', function() {
+                searchWeather();
+            });
+            
+            // 输入框回车事件
+            cityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWeather();
+                }
+            });
+            
+            // 热门城市按钮点击事件
+            cityButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const city = this.dataset.city;
+                    cityInput.value = city;
+                    searchWeather();
+                });
+            });
+            
+            // 搜索天气
+            function searchWeather() {
+                const city = cityInput.value.trim();
+                
+                if (!city) {
+                    alert('请输入城市名称');
+                    return;
+                }
+                
+                // 显示加载提示
+                weatherInfo.classList.remove('active');
+                weatherError.style.display = 'none';
+                loading.style.display = 'block';
+                
+                // 模拟网络请求延迟
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    
+                    if (weatherData[city]) {
+                        displayWeather(city);
+                    } else {
+                        weatherError.style.display = 'block';
+                    }
+                }, 800);
+            }
+            
+            // 显示天气信息
+            function displayWeather(city) {
+                if (!weatherData[city]) return;
+                
+                // 更新城市名和时间
+                document.getElementById('location').textContent = city;
+                document.getElementById('current-time').textContent = getCurrentTime();
+                
+                // 更新天气信息
+                const data = weatherData[city];
+                document.getElementById('temperature').textContent = data.temperature;
+                document.getElementById('weather-desc').textContent = data.description;
+                document.getElementById('feels-like').textContent = data.feelsLike;
+                document.getElementById('humidity').textContent = data.humidity;
+                document.getElementById('wind-speed').textContent = data.windSpeed;
+                document.getElementById('pressure').textContent = data.pressure;
+                document.getElementById('weather-icon').textContent = data.icon;
+                
+                // 更新天气预报
+                const forecastContainer = document.getElementById('forecast-container');
+                forecastContainer.innerHTML = '';
+                
+                data.forecast.forEach(forecast => {
+                    const forecastItem = document.createElement('div');
+                    forecastItem.className = 'forecast-item';
+                    
+                    forecastItem.innerHTML = `
+                        <div class="forecast-day">${forecast.day}</div>
+                        <div class="forecast-icon">${forecast.icon}</div>
+                        <div class="forecast-temp">
+                            <div class="forecast-high">${forecast.high}</div>
+                            <div class="forecast-low">${forecast.low}</div>
+                        </div>
+                    `;
+                    
+                    forecastContainer.appendChild(forecastItem);
+                });
+                
+                // 显示天气信息
+                weatherInfo.classList.add('active');
+            }
+            
+            // 获取当前时间
+            function getCurrentTime() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                return `${year}-${month}-${day} ${hours}:${minutes}`;
+            }
+        });
+    </script>
+</body>
+</html> 

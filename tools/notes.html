@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记事本 - 我的个人网站</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../animations.css">
+    <style>
+        .tool-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .notes-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            min-height: 400px;
+        }
+        
+        .notes-sidebar {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .notes-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .note-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-left: 3px solid transparent;
+        }
+        
+        .note-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .note-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .note-title {
+            font-size: 0.9rem;
+            color: #ddd;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .note-date {
+            font-size: 0.7rem;
+            color: #888;
+        }
+        
+        .note-content-area {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .note-title-input {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .note-editor {
+            flex: 1;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-size: 1rem;
+            resize: none;
+            min-height: 300px;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.5;
+        }
+        
+        .note-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .note-btn {
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .note-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .note-btn.save-btn {
+            background-color: rgba(0, 100, 0, 0.3);
+        }
+        
+        .note-btn.save-btn:hover {
+            background-color: rgba(0, 100, 0, 0.5);
+        }
+        
+        .note-btn.delete-btn {
+            background-color: rgba(100, 0, 0, 0.3);
+        }
+        
+        .note-btn.delete-btn:hover {
+            background-color: rgba(100, 0, 0, 0.5);
+        }
+        
+        .sidebar-actions {
+            margin-bottom: 15px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #fff;
+        }
+        
+        @media (max-width: 768px) {
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .notes-sidebar {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo animated-logo">个人网站</div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-item">首页</a></li>
+                <li><a href="../resume.html" class="nav-item">个人简历</a></li>
+                <li><a href="../xiaohongshu.html" class="nav-item">小红书</a></li>
+                <li><a href="../douyin.html" class="nav-item">抖音</a></li>
+                <li><a href="../about.html" class="nav-item">About me</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>记事本</h1>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container">
+                <div class="tool-content">
+                    <h2>我的笔记</h2>
+                    <p>在这里记录您的想法、灵感和重要信息。</p>
+                    
+                    <div class="notes-container">
+                        <div class="notes-sidebar">
+                            <div class="sidebar-actions">
+                                <button id="new-note-btn" class="note-btn">新建笔记</button>
+                            </div>
+                            <ul id="notes-list" class="notes-list">
+                                <!-- 笔记列表将通过JavaScript动态添加 -->
+                            </ul>
+                        </div>
+                        
+                        <div class="note-content-area">
+                            <input type="text" id="note-title" class="note-title-input" placeholder="笔记标题...">
+                            <textarea id="note-content" class="note-editor" placeholder="在这里写下您的想法..."></textarea>
+                            <div class="note-actions">
+                                <button id="save-note-btn" class="note-btn save-btn">保存</button>
+                                <button id="delete-note-btn" class="note-btn delete-btn">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="../about.html" class="back-link">← 返回工具箱</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 个人网站. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notesList = document.getElementById('notes-list');
+            const noteTitleInput = document.getElementById('note-title');
+            const noteContentInput = document.getElementById('note-content');
+            const newNoteBtn = document.getElementById('new-note-btn');
+            const saveNoteBtn = document.getElementById('save-note-btn');
+            const deleteNoteBtn = document.getElementById('delete-note-btn');
+            
+            let notes = JSON.parse(localStorage.getItem('notes')) || [];
+            let currentNoteId = null;
+            
+            // 如果没有笔记，创建一个示例笔记
+            if (notes.length === 0) {
+                const date = new Date();
+                notes = [
+                    {
+                        id: 1,
+                        title: '欢迎使用记事本',
+                        content: '这是一个简单的记事本应用，您可以在这里记录您的想法和灵感。\n\n使用方法：\n1. 点击"新建笔记"创建一个新笔记\n2. 输入标题和内容\n3. 点击"保存"按钮保存笔记\n\n所有笔记都会保存在您的浏览器中，即使关闭页面也不会丢失。',
+                        date: date.toISOString()
+                    }
+                ];
+                saveNotes();
+            }
+            
+            // 渲染笔记列表
+            renderNotesList();
+            
+            // 如果有笔记，默认显示第一个
+            if (notes.length > 0) {
+                displayNote(notes[0].id);
+            }
+            
+            // 新建笔记
+            newNoteBtn.addEventListener('click', function() {
+                const date = new Date();
+                const newNote = {
+                    id: Date.now(),
+                    title: '新笔记',
+                    content: '',
+                    date: date.toISOString()
+                };
+                
+                notes.unshift(newNote);
+                saveNotes();
+                renderNotesList();
+                displayNote(newNote.id);
+            });
+            
+            // 保存笔记
+            saveNoteBtn.addEventListener('click', function() {
+                if (currentNoteId === null) return;
+                
+                const title = noteTitleInput.value.trim() || '无标题笔记';
+                const content = noteContentInput.value;
+                const date = new Date();
+                
+                notes = notes.map(note => {
+                    if (note.id === currentNoteId) {
+                        note.title = title;
+                        note.content = content;
+                        note.date = date.toISOString();
+                    }
+                    return note;
+                });
+                
+                saveNotes();
+                renderNotesList();
+                
+                // 显示保存成功的反馈
+                const originalText = saveNoteBtn.textContent;
+                saveNoteBtn.textContent = '已保存';
+                setTimeout(() => {
+                    saveNoteBtn.textContent = originalText;
+                }, 1500);
+            });
+            
+            // 删除笔记
+            deleteNoteBtn.addEventListener('click', function() {
+                if (currentNoteId === null) return;
+                
+                if (confirm('确定要删除这个笔记吗？')) {
+                    notes = notes.filter(note => note.id !== currentNoteId);
+                    saveNotes();
+                    renderNotesList();
+                    
+                    if (notes.length > 0) {
+                        displayNote(notes[0].id);
+                    } else {
+                        clearNoteDisplay();
+                    }
+                }
+            });
+            
+            // 渲染笔记列表
+            function renderNotesList() {
+                notesList.innerHTML = '';
+                
+                notes.forEach(note => {
+                    const li = document.createElement('li');
+                    li.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
+                    li.dataset.id = note.id;
+                    
+                    const title = document.createElement('div');
+                    title.className = 'note-title';
+                    title.textContent = note.title;
+                    
+                    const date = document.createElement('div');
+                    date.className = 'note-date';
+                    date.textContent = formatDate(new Date(note.date));
+                    
+                    li.appendChild(title);
+                    li.appendChild(date);
+                    
+                    li.addEventListener('click', function() {
+                        displayNote(note.id);
+                    });
+                    
+                    notesList.appendChild(li);
+                });
+            }
+            
+            // 显示笔记内容
+            function displayNote(id) {
+                const note = notes.find(note => note.id === id);
+                if (!note) return;
+                
+                currentNoteId = id;
+                noteTitleInput.value = note.title;
+                noteContentInput.value = note.content;
+                
+                // 更新选中状态
+                document.querySelectorAll('.note-item').forEach(item => {
+                    item.classList.toggle('active', parseInt(item.dataset.id) === id);
+                });
+            }
+            
+            // 清空笔记显示
+            function clearNoteDisplay() {
+                currentNoteId = null;
+                noteTitleInput.value = '';
+                noteContentInput.value = '';
+            }
+            
+            // 保存笔记到本地存储
+            function saveNotes() {
+                localStorage.setItem('notes', JSON.stringify(notes));
+            }
+            
+            // 格式化日期
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${year}-${month}-${day} ${hours}:${minutes}`;
+            }
+        });
+    </script>
+</body>
+</html> 

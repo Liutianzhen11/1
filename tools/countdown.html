@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倒计时工具 - 我的个人网站</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../animations.css">
+    <style>
+        .tool-content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+        }
+        .countdown-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .countdown-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .countdown-display {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .countdown-label {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .countdown-label span {
+            width: 70px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo animated-logo">个人网站</div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-item">首页</a></li>
+                <li><a href="../resume.html" class="nav-item">个人简历</a></li>
+                <li><a href="../xiaohongshu.html" class="nav-item">小红书</a></li>
+                <li><a href="../douyin.html" class="nav-item">抖音</a></li>
+                <li><a href="../about.html" class="nav-item">About me</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>倒计时工具</h1>
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="container">
+                <div class="tool-content">
+                    <h2>设置倒计时</h2>
+                    <p>输入目标日期和时间，开始倒计时。</p>
+                    
+                    <div class="input-group">
+                        <label for="event-name">事件名称</label>
+                        <input type="text" id="event-name" placeholder="例如：考试、会议、生日..." value="我的重要日子">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="target-date">目标日期</label>
+                        <input type="date" id="target-date">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="target-time">目标时间</label>
+                        <input type="time" id="target-time" value="00:00">
+                    </div>
+                    
+                    <button id="start-btn" class="countdown-btn">开始倒计时</button>
+                    <button id="reset-btn" class="countdown-btn">重置</button>
+                    
+                    <div class="countdown-display" id="countdown">
+                        00:00:00:00
+                    </div>
+                    <div class="countdown-label">
+                        <span>天</span>
+                        <span>时</span>
+                        <span>分</span>
+                        <span>秒</span>
+                    </div>
+                    
+                    <a href="../about.html" class="back-link">← 返回工具箱</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 个人网站. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="../scripts.js"></script>
+    <script>
+        // 设置今天的日期为默认值
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            month = month < 10 ? '0' + month : month;
+            let day = today.getDate();
+            day = day < 10 ? '0' + day : day;
+            
+            const futureDate = new Date();
+            futureDate.setDate(futureDate.getDate() + 7); // 默认为一周后
+            const futureYear = futureDate.getFullYear();
+            let futureMonth = futureDate.getMonth() + 1;
+            futureMonth = futureMonth < 10 ? '0' + futureMonth : futureMonth;
+            let futureDay = futureDate.getDate();
+            futureDay = futureDay < 10 ? '0' + futureDay : futureDay;
+            
+            document.getElementById('target-date').value = `${futureYear}-${futureMonth}-${futureDay}`;
+            
+            // 初始化倒计时
+            updateCountdown();
+        });
+        
+        // 开始倒计时
+        document.getElementById('start-btn').addEventListener('click', function() {
+            updateCountdown();
+        });
+        
+        // 重置倒计时
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            const today = new Date();
+            const futureDate = new Date();
+            futureDate.setDate(futureDate.getDate() + 7); // 重置为一周后
+            const futureYear = futureDate.getFullYear();
+            let futureMonth = futureDate.getMonth() + 1;
+            futureMonth = futureMonth < 10 ? '0' + futureMonth : futureMonth;
+            let futureDay = futureDate.getDate();
+            futureDay = futureDay < 10 ? '0' + futureDay : futureDay;
+            
+            document.getElementById('target-date').value = `${futureYear}-${futureMonth}-${futureDay}`;
+            document.getElementById('target-time').value = '00:00';
+            document.getElementById('event-name').value = '我的重要日子';
+            updateCountdown();
+        });
+        
+        // 更新倒计时
+        function updateCountdown() {
+            const eventName = document.getElementById('event-name').value;
+            const targetDate = document.getElementById('target-date').value;
+            const targetTime = document.getElementById('target-time').value;
+            
+            if (!targetDate) {
+                alert('请选择目标日期');
+                return;
+            }
+            
+            const targetDateTime = new Date(`${targetDate}T${targetTime || '00:00'}`);
+            const now = new Date();
+            
+            // 计算剩余时间
+            const diff = targetDateTime - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').innerText = '时间已到！';
+                return;
+            }
+            
+            // 计算天、时、分、秒
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // 格式化显示
+            const formattedDays = String(days).padStart(2, '0');
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+            
+            document.getElementById('countdown').innerText = 
+                `${formattedDays}:${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+            
+            // 更新页面标题
+            document.title = `${eventName} - 倒计时 ${formattedDays}天${formattedHours}时${formattedMinutes}分`;
+            
+            // 每秒更新一次
+            setTimeout(updateCountdown, 1000);
+        }
+    </script>
+</body>
+</html> 
