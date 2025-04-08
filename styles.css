@@ -127,8 +127,8 @@ nav {
 }
 
 .photo-gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    justify-content: center;
     gap: 30px;
     margin-bottom: 40px;
 }
@@ -140,6 +140,8 @@ nav {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     transition: all 0.5s ease;
     position: relative;
+    max-width: 500px;
+    width: 100%;
 }
 
 .photo-item:hover {
